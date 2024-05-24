@@ -6,9 +6,6 @@ function Connect-UnifiController {
         [Parameter(ParameterSetName = 'Refresh')][switch]$Refresh,
         [Parameter(ParameterSetName = 'Connect')][switch]$UDMPro
     )
-
-    ErrorActionPreference = "break"
-
     if (!$refresh) {
 
         if ($UDMPro) {
@@ -22,15 +19,16 @@ function Connect-UnifiController {
         $script:Credentials = $credentials
     }
 
-    $params = @{
+    $body = @{
         username = $script:credentials.GetNetworkCredential().UserName
         password = $script:credentials.GetNetworkCredential().password
     }
-    $body = New-UnifiCommand $params
+
 
     try {
-        $results = Invoke-RestMethod -Uri $LoginURI -Method post -Body $body -ContentType "application/json; charset=utf-8"  -SessionVariable myWebSession -SkipCertificateCheck
-        if ($results.meta.rc -eq "ok") {
+        #$results = Invoke-RestMethod -Uri $LoginURI -Method post -Body $($body | ConvertTo-Json) -ContentType "application/json; charset=utf-8" -SessionVariable myWebSession -SkipCertificateCheck
+        $results = Invoke-WebRequest -Uri $LoginURI -Method post -Body $($body | ConvertTo-Json) -ContentType "application/json; charset=utf-8" -SessionVariable myWebSession -SkipCertificateCheck
+        if ($results.Statuscode -eq "200") {
             if (!$refresh) {
                 Write-Verbose "Successfully connected to Unifi controller."
             }
