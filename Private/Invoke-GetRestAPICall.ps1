@@ -9,10 +9,10 @@ function Invoke-GetRestAPICall {
     )
     try {
         if ($headers) {
-            $request = Invoke-RestMethod -Method GET -Headers $headers -Uri $url -WebSession $Session
+            $request = Invoke-RestMethod -Method GET -Headers $headers -Uri $url -WebSession -SkipCertificateCheck
         }
         else {
-            $request = Invoke-RestMethod -Uri $url -WebSession $Session
+            $request = Invoke-RestMethod -Uri $url -WebSession $Session -SkipCertificateCheck
         }
     }
     catch [System.Net.WebException] {
@@ -21,17 +21,17 @@ function Invoke-GetRestAPICall {
         switch ($exceptionMessage) {
             # Refresh the login if the cookie times out.
             "The underlying connection was closed: An unexpected error occurred on a send." {
-                write-verbose "Connection timed out. Refreshing session."
+                Write-Verbose "Connection timed out. Refreshing session."
                 Connect-UnifiController -Refresh
                 if ($headers) {
-                    $request = Invoke-RestMethod -Method GET -Headers $headers -Uri $url -WebSession $Session
+                    $request = Invoke-RestMethod -Method GET -Headers $headers -Uri $url -WebSession $Session -SkipCertificateCheck
                 }
                 else {
-                    $request = Invoke-RestMethod -Uri $url -WebSession $Session
+                    $request = Invoke-RestMethod -Uri $url -WebSession $Session -SkipCertificateCheck
                 }
             }
             default {
-                write-host "Error Message: $exceptionmessage"
+                Write-Host "Error Message: $exceptionmessage"
                 exit 1
             }
         }

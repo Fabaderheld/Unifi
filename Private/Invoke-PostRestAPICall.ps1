@@ -13,13 +13,13 @@ function Invoke-POSTRestAPICall {
 
     try {
         if ($headers) {
-            $request = Invoke-RestMethod -Method POST -Headers $headers -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session
+            $request = Invoke-RestMethod -Method POST -Headers $headers -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session -SkipCertificateCheck
         }
         else {
-            $request = Invoke-RestMethod -method POST -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session
+            $request = Invoke-RestMethod -Method POST -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session -SkipCertificateCheck
         }
-    } 
-    
+    }
+
     catch [System.Net.WebException] {
         $exceptionError = $_.Exception
         $exceptionMessage = $_.Exception.Message
@@ -27,17 +27,17 @@ function Invoke-POSTRestAPICall {
         switch ($exceptionMessage) {
             # Refresh the login if the cookie times out.
             "The remote server returned an error: (401) Unauthorized." {
-                write-verbose "Connection timed out. Refreshing session."
+                Write-Verbose "Connection timed out. Refreshing session."
                 Connect-UnifiController -Refresh
                 if ($headers) {
-                    $request = Invoke-RestMethod -Method POST -Headers $headers -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session
+                    $request = Invoke-RestMethod -Method POST -Headers $headers -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session -SkipCertificateCheck
                 }
                 else {
-                    $request = Invoke-RestMethod -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session
+                    $request = Invoke-RestMethod -Body $payload -Uri $url -ContentType "application/json; charset=utf-8" -WebSession $Session -SkipCertificateCheck
                 }
             }
             default {
-                write-host "Error Message: $ExceptionMessage"
+                Write-Host "Error Message: $ExceptionMessage"
                 exit 1
             }
         }
