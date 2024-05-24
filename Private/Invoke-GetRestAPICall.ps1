@@ -9,7 +9,7 @@ function Invoke-GetRestAPICall {
     )
     try {
         if ($headers) {
-            $request = Invoke-RestMethod -Method GET -Headers $headers -Uri $url -WebSession -SkipCertificateCheck
+            $request = Invoke-RestMethod -Method GET -Headers $headers -Uri $url -WebSession $Session -SkipCertificateCheck
         }
         else {
             $request = Invoke-RestMethod -Uri $url -WebSession $Session -SkipCertificateCheck
