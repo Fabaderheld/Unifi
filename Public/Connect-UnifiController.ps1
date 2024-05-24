@@ -7,6 +7,8 @@ function Connect-UnifiController {
         [Parameter(ParameterSetName = 'Connect')][switch]$UDMPro
     )
 
+    ErrorActionPreference = "break"
+
     if (!$refresh) {
 
         if ($UDMPro) {
